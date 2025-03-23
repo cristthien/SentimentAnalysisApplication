@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="input_hint">Nhập câu của bạn...</string>
+    <string name="submit">Submit</string>
+    <string name="sentiment">Sentiment</string>
+    <string name="emotion_icon_desc">Biểu tượng cảm xúc</string>
+</resources>
