@@ -1,6 +1,6 @@
 package com.example.sentimen
 
-import SentimentAnalysis.analyzeSentiment
+import SentimentAnalysis.analyzeSentimentPhoBERTModel
 import android.os.Bundle
 import android.view.View
 import androidx.activity.enableEdgeToEdge
@@ -10,14 +10,6 @@ import androidx.core.view.WindowInsetsCompat
 import android.widget.*
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import org.json.JSONArray
-import org.json.JSONObject
-import java.io.OutputStreamWriter
-import java.net.HttpURLConnection
-import java.net.URL
 
 class MainActivity : AppCompatActivity() {
     private lateinit var inputText: EditText
@@ -41,14 +33,12 @@ class MainActivity : AppCompatActivity() {
         emotionIcon = findViewById(R.id.emotionIcon)
         mainLayout = findViewById(R.id.main)
 
-// Xử lý sự kiện khi bấm nút gửi
         submitButton.setOnClickListener {
-            val userInput = inputText.text.toString().trim() // Loại bỏ khoảng trắng thừa
+            val userInput = inputText.text.toString().trim()
 
             if (userInput.isNotEmpty()) {
-                val apiKey = "AIzaSyDxQzpuhEUgTGcLlqVnC2Ik7HKujlz2QRE"
-                analyzeSentiment(userInput, apiKey) { response ->
-                    println("Response: $response") // Log kết quả trả về
+                analyzeSentimentPhoBERTModel(userInput) { response ->
+                    println("Response: $response")
 
                     runOnUiThread {
                         when {
@@ -57,16 +47,22 @@ class MainActivity : AppCompatActivity() {
                                 mainLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.white))
                                 emotionIcon.visibility = View.GONE // Ẩn icon khi không có dữ liệu
                             }
-                            response.contains("positive", ignoreCase = true) -> {
+                            response.contains("POS", ignoreCase = true) -> {
                                 // Nếu tích cực -> Đổi màu nền xanh, hiển thị icon happy
                                 mainLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.green))
                                 emotionIcon.setImageResource(R.drawable .happy)
                                 emotionIcon.visibility = View.VISIBLE
                             }
-                            else -> {
+                            response.contains("NEG", ignoreCase = true)  -> {
                                 // Nếu không tích cực -> Đổi nền đỏ, hiển thị icon sad
                                 mainLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.red))
                                 emotionIcon.setImageResource(R.drawable.sad)
+                                emotionIcon.visibility = View.VISIBLE
+                            }
+                            else -> {
+                                // Nếu không tích cực -> Đổi nền đỏ, hiển thị icon sad
+                                mainLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.white))
+                                emotionIcon.setImageResource(R.drawable.happy)
                                 emotionIcon.visibility = View.VISIBLE
                             }
 
